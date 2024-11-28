@@ -12,3 +12,9 @@
     height: 30px;
     font-size: 16px;
 }
+
+.form-btn {
+    padding-inline-start: 0;
+    width: 348px;
+    height: 24px;
+}

@@ -19,20 +19,22 @@ function onFormSubmit(evt) {
     }, delay);
   });
   promise
-    .then(resolved =>
+    .then(value =>
       iziToast.success({
-        message: `${resolved}`,
+        message: value,
         icon: '',
         progressBar: false,
         close: false,
+        position: 'topRight',
       })
     )
-    .catch(rejected =>
+    .catch(error =>
       iziToast.error({
-        message: `${rejected}`,
+        message: error,
         icon: '',
         progressBar: false,
         close: false,
+        position: 'topRight',
       })
     );
 }
