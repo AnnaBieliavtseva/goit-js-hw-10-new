@@ -6,11 +6,18 @@ import 'izitoast/dist/css/iziToast.min.css';
 
 const datetimePicker = document.querySelector('#datetime-picker');
 const btnStart = document.querySelector('.start-btn');
+const timerFields = {
+  days: document.querySelector('[data-days]'),
+  hours: document.querySelector('[data-hours]'),
+  minutes: document.querySelector('[data-minutes]'),
+  seconds: document.querySelector('[data-seconds]'),
+};
 
-
-
-// console.log(date);
 let userSelectedDate;
+let timerId = null;
+
+btnStart.disabled = true;
+
 
 const options = {
   enableTime: true,
@@ -18,8 +25,8 @@ const options = {
   defaultDate: new Date(),
   minuteIncrement: 1,
 
-    onClose(selectedDates) {
-      const dateNow = new Date();
+  onClose(selectedDates) {
+    const dateNow = new Date();
     userSelectedDate = selectedDates[0];
 
     if (userSelectedDate <= dateNow) {
@@ -32,28 +39,50 @@ const options = {
         progressBar: false,
         close: false,
       });
-      btnStart.classList.add('disable');
-      
+      btnStart.disabled = true;
     } else {
       iziToast.destroy();
-
-      btnStart.classList.remove('disable');
-
-        console.log(userSelectedDate);
-       
-        
-        // return this.userSelectedDate;
-        }
-       
-        
-        
+      btnStart.disabled = false;
+    }
   },
 };
 
 flatpickr(datetimePicker, options);
-console.log(userSelectedDate)
- const differenceDate = userSelectedDate - dateNow;
- console.log(differenceDate);
+
+btnStart.addEventListener('click', onBtnStartClick);
+
+function onBtnStartClick() {
+  btnStart.disabled = true;
+  datetimePicker.disabled = true;
+
+  timerId = setInterval(() => {
+    const now = new Date();
+    const timeDifference = userSelectedDate - now;
+
+    if (timeDifference <= 0) {
+      clearInterval(timerId);
+      updateTimerDisplay(0, 0, 0, 0);
+      datetimePicker.disabled = false;
+      return;
+    }
+      const timeComponents = convertMs(timeDifference)
+      updateTimerDisplay(timeComponents.days, timeComponents.hours, timeComponents.minutes, timeComponents.seconds)
+    
+  }, 1000)
+
+}
+
+function updateTimerDisplay( days, hours, minutes, seconds ) {
+  timerFields.days.textContent = addLeadingZero(days);
+  timerFields.hours.textContent = addLeadingZero(hours);
+  timerFields.minutes.textContent = addLeadingZero(minutes);
+  timerFields.seconds.textContent = addLeadingZero(seconds);
+  }
+
+function addLeadingZero(value) {
+    return String(value).padStart(2, '0')
+  }
+
 function convertMs(ms) {
   // Number of milliseconds per unit of time
   const second = 1000;
@@ -73,4 +102,4 @@ function convertMs(ms) {
   return { days, hours, minutes, seconds };
 }
 
-console.log(convertMs(differenceDate))
+
